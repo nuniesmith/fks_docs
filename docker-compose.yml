@@ -1,0 +1,36 @@
+services:
+  fks_docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: ["/usr/local/bin/fks_docs", "--listen", "0.0.0.0:8040", "--dir", "/app/docs"]
+    environment:
+      TZ: America/Toronto
+      SERVICE_PORT: 8040
+      RUST_LOG: debug
+    ports:
+      - "8040:8040"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./logs:/app/logs
+      - ./debug-start.sh:/app/debug-start.sh:ro
+      - rust_target:/app/target
+      - ./docs:/app/docs:ro
+    networks:
+      - fks_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8040/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  rust_target:
+
+networks:
+  fks_net:
+    name: fks_net
+    external: true

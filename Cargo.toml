@@ -1,0 +1,42 @@
+[package]
+name = "fks_docs"
+version = "0.1.0"
+edition = "2021"
+description = "FKS Documentation Service (serves markdown/HTML docs to web UI)"
+license = "MIT"
+
+[dependencies]
+tokio = { version = "1.47.1", features = ["full"] }
+axum = { version = "0.8.4", features = ["macros"] }
+tower = "0.5.2"
+tower-http = { version = "0.6.6", features = ["cors", "trace", "compression-br", "decompression-gzip"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.143"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"] }
+once_cell = "1.21.3"
+anyhow = "1.0.99"
+thiserror = "2.0.16"
+chrono = { version = "0.4.41", features = ["serde"] }
+walkdir = "2.5.0"
+pulldown-cmark = "0.11.0"
+percent-encoding = "2.3.1"
+sha2 = "0.10.8"
+mime_guess = "2.0.5"
+tokio-util = "0.7.12"
+futures = "0.3.31"
+clap = { version = "4.5.46", features = ["derive"] }
+
+# Shared crate (optional if submodule present)
+
+[features]
+default = []
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[[bin]]
+name = "fks_docs"
+path = "src/main.rs"

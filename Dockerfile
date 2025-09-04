@@ -6,55 +6,29 @@ FROM --platform=$BUILDPLATFORM rust:${RUST_VERSION}-slim AS builder
 WORKDIR /app
 ENV CARGO_TERM_COLOR=always
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    pkg-config \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+# System deps (kept minimal)
+RUN apt-get update && apt-get install -y --no-install-recommends pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
 
-# Copy manifests first for better layer caching
 COPY Cargo.toml ./
-COPY Cargo.lock ./
+COPY Cargo.lock* ./
+RUN mkdir -p src && echo "fn main(){}" > src/main.rs && cargo fetch
 
-# Pre-fetch dependencies (empty src to maximize cache)
-RUN mkdir src && echo "fn main(){}" > src/main.rs && cargo build --release || true
-
-# Now copy real sources
+# Real sources
 RUN rm -rf src
 COPY src/ src/
-COPY templates/ templates/
+COPY docs/ docs/
 
-# Build the application (honor target platform for multi-arch)
-RUN echo "Building for TARGETPLATFORM=$TARGETPLATFORM" && \
-    cargo build --release
+RUN echo "Building for TARGETPLATFORM=$TARGETPLATFORM" && cargo build --release --locked || cargo build --release
 
-# Runtime stage
 FROM debian:bookworm-slim
-
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/* && update-ca-certificates
+COPY --from=builder /app/target/release/fks_docs /usr/local/bin/fks_docs
+COPY docs/ docs/
+RUN useradd -r -s /bin/false -u 1000 fks_docs && chown -R fks_docs:fks_docs /app
+USER fks_docs
+EXPOSE 8040
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl -fsS http://localhost:8040/health || exit 1
+ENV FKS_DOCS_PORT=8040 FKS_DOCS_DIR=docs FKS_DOCS_RENDER_MD_HTML=1
+CMD ["/usr/local/bin/fks_docs"]
 
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    curl \
-    libssl3 \
- && rm -rf /var/lib/apt/lists/* && update-ca-certificates
-
-# Copy the binary and assets
-COPY --from=builder /app/target/release/fks_master /usr/local/bin/fks_master
-COPY --from=builder /app/templates /app/templates
-COPY config/ /app/config/
-
-# Create logs directory
-RUN mkdir -p /app/logs && \
-    useradd -r -s /bin/false -u 1000 fks_master && \
-    chown -R fks_master:fks_master /app/logs
-
-USER fks_master
-
-EXPOSE 3030 9090
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -fsS http://localhost:3030/health || exit 1
-
-CMD ["fks_master", "--host", "0.0.0.0", "--port", "3030"]

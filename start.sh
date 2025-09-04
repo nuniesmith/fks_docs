@@ -90,12 +90,16 @@ bring_up(){
 health_checks(){
   log INFO "Running health probes (retries=$HEALTH_RETRIES interval=${HEALTH_INTERVAL}s)"
   local attempts=0
-  local ok_api=false ok_db=false ok_redis=false
+  local ok_api=false ok_db=false ok_redis=false ok_docs=false
   while (( attempts < HEALTH_RETRIES )); do
     attempts=$((attempts+1))
     # API
     if ! $ok_api; then
       if curl -s -f http://localhost:8000/health >/dev/null 2>&1; then ok_api=true; log INFO "API healthy"; fi
+    fi
+    # Docs
+    if ! $ok_docs; then
+      if curl -s -f http://localhost:8040/health >/dev/null 2>&1; then ok_docs=true; log INFO "Docs healthy"; fi
     fi
     # Postgres container exists? use pg_isready
     if ! $ok_db && docker ps --format '{{.Names}}' | grep -q '^fks_postgres$'; then
@@ -105,17 +109,18 @@ health_checks(){
     if ! $ok_redis && docker ps --format '{{.Names}}' | grep -q '^fks_redis$'; then
       if docker exec fks_redis redis-cli ping 2>/dev/null | grep -q PONG; then ok_redis=true; log INFO "Redis ready"; fi
     fi
-    if $ok_api && $ok_db && $ok_redis; then break; fi
+    if $ok_api && $ok_db && $ok_redis && $ok_docs; then break; fi
     sleep "$HEALTH_INTERVAL"
   done
-  ($ok_api && $ok_db && $ok_redis) || log WARN "Some services not healthy after retries (api=$ok_api db=$ok_db redis=$ok_redis)"
+  ($ok_api && $ok_db && $ok_redis && $ok_docs) || log WARN "Some services not healthy after retries (api=$ok_api db=$ok_db redis=$ok_redis docs=$ok_docs)"
 }
 
 summary(){
   log INFO "Compose ps:"; $COMPOSE_CMD "${FILE_ARGS[@]}" ps || true
   log INFO "Key endpoints:"
-  echo "  API:   http://localhost:8000"
-  echo "  Auth:  http://localhost:9000 (if enabled)"
+  echo "  API:    http://localhost:8000"
+  echo "  Auth:   http://localhost:9000 (if enabled)"
+  echo "  Docs:   http://localhost:8040 (list: /docs/list, search: /docs/search?q=term)"
 }
 
 follow_logs(){
