@@ -29,7 +29,7 @@ ENV PATH="/home/appuser/.local/bin:$PATH"
 
 # Labels
 LABEL maintainer="FKS Trading Systems"
-LABEL org.opencontainers.image.source="https://github.com/nuniesmith/shared-docker"
+LABEL org.opencontainers.image.source="https://github.com/nuniesmith/shared_docker"
 LABEL org.opencontainers.image.description="Base image for FKS Trading Systems"
 
 # Python-specific base
