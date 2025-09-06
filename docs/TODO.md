@@ -48,7 +48,7 @@ I've refactored for clarity:
 
 # FKS Services Architecture Summary
 
-High-level overview of each FKS repository/service: purpose, primary responsibilities ("actions"), key interfaces, and relationships. Generated via code/readme inspection + `shared/shared_scripts/utils/analyze_codebase.sh` patterns, enhanced with 2025 best practices from industry sources on microservices in trading platforms (e.g., Chronicle Software for low-latency optimizations, Medium for scalable designs).
+High-level overview of each FKS repository/service: purpose, primary responsibilities ("actions"), key interfaces, and relationships. Generated via code/readme inspection + `shared/scripts/utils/analyze_codebase.sh` patterns, enhanced with 2025 best practices from industry sources on microservices in trading platforms (e.g., Chronicle Software for low-latency optimizations, Medium for scalable designs).
 
 ## Legend
 - **Lang**: Primary implementation language
@@ -77,13 +77,13 @@ High-level overview of each FKS repository/service: purpose, primary responsibil
 | fks_analyze     | Rust      | Codebase analysis & Discord bot for insights.                           | Analyze structure/patterns, bot interactions.                              | HTTP REST, CLI, Discord    | Shared scripts, Ollama           | Dev tools for ecosystem maintenance. |
 
 ## Cross-Cutting Shared Modules
-- `shared/shared_python`: Config, logging, types, risk utils for Python services.
-- `shared/shared_rust`: Env/type abstractions for Rust.
-- `shared/shared_react`: TS types/hooks for front-end.
-- `shared/shared_schema`: JSON Schemas for contracts (e.g., health, signals).
-- `shared/shared_scripts`: Automation for CI/CD, ops, analysis.
-- `shared/shared_docker`: Dockerfiles, Compose files, and related tooling.
-- `shared/shared_nginx`: Templates for builds, compose, configs.
+- `shared/python`: Config, logging, types, risk utils for Python services.
+- `shared/rust`: Env/type abstractions for Rust.
+- `shared/react`: TS types/hooks for front-end.
+- `shared/schema`: JSON Schemas for contracts (e.g., health, signals).
+- `shared/scripts`: Automation for CI/CD, ops, analysis.
+- `shared/docker`: Dockerfiles, Compose files, and related tooling.
+- `shared/nginx`: Templates for builds, compose, configs.
 
 ## Service Dependency Graph (Mermaid)
 ```mermaid
@@ -184,15 +184,15 @@ The plan is divided into phases with actionable steps, timelines (assuming 1-2 d
 Focus: Audit, resolve conflicts, remove bloat, and baseline the codebase.
 
 1. **Run Comprehensive Code Analysis**
-   - Use `shared/shared_scripts/utils/analyze_codebase.sh` (from docs) on all 32 repos to generate fresh summaries (include `--full` flag if available for non-truncated output).
-   - Scan for duplicates: Run `shared/shared_scripts/tools/find_duplicates.sh` and `generate_candidate_removals.sh` to identify overlapping files (e.g., COC-related in `fks_analyze` vs. `personal_games_coc`).
+   - Use `shared/scripts/utils/analyze_codebase.sh` (from docs) on all 32 repos to generate fresh summaries (include `--full` flag if available for non-truncated output).
+   - Scan for duplicates: Run `shared/scripts/tools/find_duplicates.sh` and `generate_candidate_removals.sh` to identify overlapping files (e.g., COC-related in `fks_analyze` vs. `personal_games_coc`).
    - Check dependencies: For each language, update and audit (e.g., `pip check` for Python, `cargo audit` for Rust, `npm audit` for JS/TS, `nuget` for C#).
    - **Timeline:** 1 day. **Success:** Updated `summary.txt` with no truncations; list of 50+ duplicates/conflicts.
 
 2. **Resolve Git Conflicts and Duplicates**
    - For each `.sync-conflict-*` file (e.g., in `fks_analyze/coc`), manually merge or delete obsolete versions using `git mergetool`.
-   - Consolidate duplicates: Move common code (e.g., logging utils) to `shared_python`, `shared_rust`, etc. Use `shared/shared_scripts/tools/apply_duplicate_mapping.sh` to automate.
-   - Exclude bloat: Add `.gitignore` for `node_modules`, `__pycache__`, etc. in all repos. Run `shared/shared_scripts/tools/curate_empty_files.sh` to remove empty/small files.
+   - Consolidate duplicates: Move common code (e.g., logging utils) to `shared_python`, `shared_rust`, etc. Use `shared/scripts/tools/apply_duplicate_mapping.sh` to automate.
+   - Exclude bloat: Add `.gitignore` for `node_modules`, `__pycache__`, etc. in all repos. Run `shared/scripts/tools/curate_empty_files.sh` to remove empty/small files.
    - **Timeline:** 2 days. **Success:** No conflict files; repo count reduced if merging possibles (e.g., combine game repos into `personal_games` monorepo).
 
 3. **Separate Domains if Needed**
@@ -202,15 +202,15 @@ Focus: Audit, resolve conflicts, remove bloat, and baseline the codebase.
 
 4. **Backup and Version Baseline**
    - Create a Git tag: `git tag v0.1-baseline` in each repo.
-   - Run `shared/shared_scripts/tools/archive_migrations.sh` for old migrations/files.
+   - Run `shared/scripts/tools/archive_migrations.sh` for old migrations/files.
    - **Timeline:** 0.5 days. **Success:** Clean repos ready for changes.
 
 ## Phase 2: Standardization and DRY Enforcement (Week 1-2)
 Focus: Align with shared repos, enforce patterns from `multi_language_analysis_guide.txt`.
 
 1. **Update Shared Repos**
-   - In `shared/shared_schema`, add missing schemas (e.g., trade signal, health response) using JSON Schema.
-   - Enhance `shared/shared_scripts`: Add scripts for auto-generating `.env` from `fks_config` (integrate with `generate.py`).
+   - In `shared/schema`, add missing schemas (e.g., trade signal, health response) using JSON Schema.
+   - Enhance `shared/scripts`: Add scripts for auto-generating `.env` from `fks_config` (integrate with `generate.py`).
    - For languages: Add common patterns (e.g., error handling wrappers in `shared_python/utils/errors.py`, traits in `shared_rust`).
    - **Timeline:** 1 day. **Success:** New utils tested; pushed to shared repos.
 

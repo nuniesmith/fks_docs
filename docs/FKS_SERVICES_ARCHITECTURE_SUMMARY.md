@@ -108,7 +108,7 @@ Generated (refactored): $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 The verbose, repeated sections were removed for brevity. Refer to git history if a fully expanded narrative per service is required.
 
-High-level overview of each FKS repository/service: purpose, primary responsibilities ("actions"), key interfaces, and relationships. Generated via code/readme inspection + `shared/shared_scripts/utils/analyze_codebase.sh` patterns, enhanced with 2025 best practices from industry sources on microservices in trading platforms.
+High-level overview of each FKS repository/service: purpose, primary responsibilities ("actions"), key interfaces, and relationships. Generated via code/readme inspection + `shared/scripts/utils/analyze_codebase.sh` patterns, enhanced with 2025 best practices from industry sources on microservices in trading platforms.
 
 ## Legend
 
@@ -297,12 +297,12 @@ High-level overview of each FKS repository/service: purpose, primary responsibil
 
 ## Cross-Cutting Shared Modules
 
-- `shared/shared_python`: Common config, logging, types, risk, metrics utilities consumed by Python services.
-- `shared/shared_rust`: Env & type abstractions for Rust crates.
-- `shared/shared_react`: Shared TS types, hooks, config for front-end.
-- `shared/shared_schema`: JSON Schemas (health, market bar, trade signal) for contract consistency.
-- `shared/shared_scripts`: Automation scripts (deployment, testing, environment setup, analysis) powering CI/CD & ops.
-- `shared/shared_docker` & `shared/shared_nginx`: Templated Dockerfiles, docker-compose fragments, base images, nginx configs.
+- `shared/python`: Common config, logging, types, risk, metrics utilities consumed by Python services.
+- `shared/rust`: Env & type abstractions for Rust crates.
+- `shared/react`: Shared TS types, hooks, config for front-end.
+- `shared/schema`: JSON Schemas (health, market bar, trade signal) for contract consistency.
+- `shared/scripts`: Automation scripts (deployment, testing, environment setup, analysis) powering CI/CD & ops.
+- `shared/docker` & `shared/nginx`: Templated Dockerfiles, docker-compose fragments, base images, nginx configs.
 
 ## Service Dependency Graph (Conceptual)
 
@@ -384,7 +384,7 @@ Generated: 2025-08-31T00:00:00Z
 
 # FKS Services Architecture Summary
 
-High-level overview of each FKS repository/service: purpose, primary responsibilities ("actions"), key interfaces, and relationships. Generated via code/readme inspection + `shared/shared_scripts/utils/analyze_codebase.sh` patterns, enhanced with 2025 best practices from industry sources on microservices in trading platforms.
+High-level overview of each FKS repository/service: purpose, primary responsibilities ("actions"), key interfaces, and relationships. Generated via code/readme inspection + `shared/scripts/utils/analyze_codebase.sh` patterns, enhanced with 2025 best practices from industry sources on microservices in trading platforms.
 
 ## Legend
 
@@ -585,12 +585,12 @@ High-level overview of each FKS repository/service: purpose, primary responsibil
 
 ## Cross-Cutting Shared Modules
 
-- `shared/shared_python`: Common config, logging, types, risk, metrics utilities consumed by Python services.
-- `shared/shared_rust`: Env & type abstractions for Rust crates.
-- `shared/shared_react`: Shared TS types, hooks, config for front-end.
-- `shared/shared_schema`: JSON Schemas (health, market bar, trade signal) for contract consistency.
-- `shared/shared_scripts`: Automation scripts (deployment, testing, environment setup, analysis) powering CI/CD & ops.
-- `shared/shared_docker` & `shared/shared_nginx`: Templated Dockerfiles, docker-compose fragments, base images, nginx configs.
+- `shared/python`: Common config, logging, types, risk, metrics utilities consumed by Python services.
+- `shared/rust`: Env & type abstractions for Rust crates.
+- `shared/react`: Shared TS types, hooks, config for front-end.
+- `shared/schema`: JSON Schemas (health, market bar, trade signal) for contract consistency.
+- `shared/scripts`: Automation scripts (deployment, testing, environment setup, analysis) powering CI/CD & ops.
+- `shared/docker` & `shared/nginx`: Templated Dockerfiles, docker-compose fragments, base images, nginx configs.
 
 ## Service Dependency Graph (Conceptual)
 
