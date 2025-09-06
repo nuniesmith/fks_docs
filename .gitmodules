@@ -6,7 +6,7 @@
 	url = https://github.com/nuniesmith/shared_schema.git
 [submodule "shared/shared_docker"]
 	path = shared/shared_docker
-	url = https://github.com/nuniesmith/shared_docker
+	url = https://github.com/nuniesmith/shared_docker.git
 [submodule "shared/shared_rust"]
 	path = shared/shared_rust
 	url = https://github.com/nuniesmith/shared_rust
