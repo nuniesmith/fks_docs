@@ -6,7 +6,7 @@ Consolidated status after implementing dynamic compose generation, E2E smoke, ba
 
 ## Key Components Implemented
 
-- Submodules integrated across services (shared-* repos).
+- Submodules integrated across services (shared_* repos).
 - Language path/dependency adjustments (Python sitecustomize, Rust path deps, TS path alias).
 - Shared Dockerfile leveraged via `generate_compose.sh` with profiles (minimal/core/full).
 - `e2e_compose_smoke.sh` enhanced for generation, health waits, teardown.
